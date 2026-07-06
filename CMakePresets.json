@@ -17,5 +17,45 @@
         "CMAKE_BUILD_TYPE": "Release"
       }
     }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "displayName": "Debug Build",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "debug-clean",
+      "displayName": "Debug Clean & Build",
+      "configurePreset": "debug",
+      "cleanFirst": true
+    },
+    {
+      "name": "debug-flash",
+      "displayName": "Debug Build & Flash",
+      "configurePreset": "debug",
+      "targets": [
+        "flash"
+      ]
+    },
+    {
+      "name": "release",
+      "displayName": "Release Build",
+      "configurePreset": "release"
+    },
+    {
+      "name": "release-clean",
+      "displayName": "Release Clean & Build",
+      "configurePreset": "release",
+      "cleanFirst": true
+    },
+    {
+      "name": "release-flash",
+      "displayName": "Release Build & Flash",
+      "configurePreset": "release",
+      "targets": [
+        "flash"
+      ]
+    }
   ]
 }
