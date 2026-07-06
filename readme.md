@@ -23,6 +23,9 @@ After configuring, you can use build presets to build, clean build, or flash:
 cmake --build --preset debug
 cmake --build --preset release
 
+# Flash (standard)
+cmake --build build/{debug|release} --target flash
+
 # Clean & Build (proper clean build)
 cmake --build --preset debug-clean
 cmake --build --preset release-clean
@@ -31,24 +34,6 @@ cmake --build --preset release-clean
 cmake --build --preset debug-flash
 cmake --build --preset release-flash
 ```
-
-### Traditional Building and Flashing
-
-Alternatively, you can build directly using directories:
-```bash
-# Build
-cmake --build build/{debug|release} 
-
-# Build and Flash
-cmake --build build/{debug|release} --target flash
-
-# Clean build (rebuild)
-cmake --build build/{debug|release} --target clean && cmake --build build/{debug|release}
-
-# Full clean (remove build directory)
-rm -rf build/
-```
-
 
 ## To-Do
 
