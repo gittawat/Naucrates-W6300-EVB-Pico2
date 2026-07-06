@@ -6,4 +6,4 @@
 	url = https://github.com/ETLCPP/etl.git
 [submodule "library/RTT"]
 	path = library/RTT
-	url = https://github.com/gittawat/RTT.git
+	url = git@github.com:gittawat/RTT.git
