@@ -11,27 +11,40 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Pull in SDK configuration macros
 include(pico_sdk_import.cmake)
 
-project(pico2_blinky C CXX ASM)
+project(ETL_RTT_testing C CXX ASM)
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 # Initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-add_executable(pico2_blinky
+# Add ETL library subdirectory
+add_subdirectory(library/etl)
+
+# Define SEGGER RTT target
+add_library(rtt STATIC
+    library/RTT/RTT/SEGGER_RTT.c
+    library/RTT/RTT/SEGGER_RTT_printf.c
+)
+target_include_directories(rtt PUBLIC
+    library/RTT/RTT
+    library/RTT/Config
+)
+
+add_executable(${PROJECT_NAME}
     main.cpp
 )
 
-# Pull in standard library dependencies (like gpio, sleep, etc.)
-target_link_libraries(pico2_blinky pico_stdlib)
+# Pull in standard library dependencies, ETL, and RTT
+target_link_libraries(${PROJECT_NAME} pico_stdlib etl rtt)
 
 # Enable USB standard output and disable UART output (optional, useful for printing)
-#pico_enable_stdio_usb(pico2_blinky 1)
-#pico_enable_stdio_uart(pico2_blinky 0)
+#pico_enable_stdio_usb(${PROJECT_NAME} 1)
+#pico_enable_stdio_uart(${PROJECT_NAME} 0)
 
 # Generate standard output files including the .uf2 image
-#pico_add_extra_outputs(pico2_blinky 
+#pico_add_extra_outputs(${PROJECT_NAME})
 
 
 # cmake --build build/debug --target flash

@@ -2,5 +2,8 @@
 	path = sdk/pico-sdk
 	url = https://github.com/raspberrypi/pico-sdk.git
 [submodule "etl"]
-	path = etl
+	path = library/etl
 	url = https://github.com/ETLCPP/etl.git
+[submodule "library/RTT"]
+	path = library/RTT
+	url = https://github.com/gittawat/RTT.git
