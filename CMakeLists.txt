@@ -22,6 +22,9 @@ pico_sdk_init()
 # Add ETL library subdirectory
 add_subdirectory(library/etl)
 
+# Add W6300 Ethernet library
+add_subdirectory(library/wiz6300-lib)
+
 # Define SEGGER RTT target
 add_library(rtt STATIC
     library/RTT/RTT/SEGGER_RTT.c
@@ -37,7 +40,7 @@ add_executable(${PROJECT_NAME}
 )
 
 # Pull in standard library dependencies, ETL, and RTT
-target_link_libraries(${PROJECT_NAME} pico_stdlib etl rtt)
+target_link_libraries(${PROJECT_NAME} pico_stdlib pico_multicore etl rtt wiz6300)
 
 # Enable USB standard output and disable UART output (optional, useful for printing)
 #pico_enable_stdio_usb(${PROJECT_NAME} 1)
