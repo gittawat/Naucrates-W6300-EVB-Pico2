@@ -19,12 +19,11 @@ Vendored subset of WIZnet ioLibrary + Pico port layer for the W6300-EVB-Pico2 bo
 
 ## Modifications from upstream
 
-Three changes from the original sources:
+Two changes from the original sources:
 
 | File | Change | Reason |
 |---|---|---|
 | `ioLibrary/wizchip_conf.h` | `#include "../Application/Application.h"` → `#include "Application.h"` | Application.h moved to same directory to flatten layout |
-| `port/wizchip_spi.h` | Added `extern "C" { }` guards | Port headers lacked C++ guards — `socket.h` and `wizchip_conf.h` already had them upstream |
 | `port/wizchip_spi.c` | PHY link check: `while (temp == PHY_LINK_OFF);` → one-shot status report | Upstream hangs forever with no Ethernet cable plugged in; we report link status and continue |
 
 ## Compile definitions

@@ -9,9 +9,6 @@
 #ifndef _WIZCHIP_GPIO_IRQ_H_
 #define _WIZCHIP_GPIO_IRQ_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
     ----------------------------------------------------------------------------------------------------
@@ -46,7 +43,3 @@ void wizchip_gpio_interrupt_initialize(uint8_t socket, void (*callback)(void));
 static void wizchip_gpio_interrupt_callback(uint gpio, uint32_t events);
 
 #endif /* _WIZCHIP_GPIO_IRQ_H_ */
-
-#ifdef __cplusplus
-}
-#endif

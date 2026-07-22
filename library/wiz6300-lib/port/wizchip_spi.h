@@ -7,9 +7,6 @@
 #ifndef _WIZCHIP_SPI_H_
 #define _WIZCHIP_SPI_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include "board_list.h"
 
@@ -237,8 +234,5 @@ void print_network_information(wiz_NetInfo net_info);
 */
 void print_ipv6_addr(uint8_t* name, uint8_t* ip6addr);
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _WIZCHIP_SPI_H_ */
