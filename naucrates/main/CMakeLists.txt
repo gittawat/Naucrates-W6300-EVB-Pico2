@@ -4,14 +4,6 @@ add_executable(naucrates
     ../modules/udp_echo/udp_echo_module.cpp
 )
 
-target_include_directories(naucrates PRIVATE
-    ${CMAKE_SOURCE_DIR}
-)
-
-target_compile_options(naucrates PRIVATE
-    -Wall -Wextra -Wno-unused-parameter
-)
-
 target_link_libraries(naucrates
     naucrates_wiznet
     naucrates_modules

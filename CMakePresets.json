@@ -4,6 +4,8 @@
     {
       "name": "debug",
       "displayName": "Debug",
+      "description": "Debug build with optimization disabled",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
@@ -12,6 +14,8 @@
     {
       "name": "release",
       "displayName": "Release",
+      "description": "Release build with optimization enabled",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -22,40 +26,58 @@
     {
       "name": "debug",
       "displayName": "Debug Build",
+      "description": "Build debug target",
       "configurePreset": "debug"
     },
     {
       "name": "debug-clean",
       "displayName": "Debug Clean & Build",
+      "description": "Clean and build debug target",
       "configurePreset": "debug",
       "cleanFirst": true
     },
     {
       "name": "debug-flash",
       "displayName": "Debug Build & Flash",
+      "description": "Build and flash debug target via probe-rs",
       "configurePreset": "debug",
-      "targets": [
-        "flash"
-      ]
+      "targets": ["flash"]
+    },
+    {
+      "name": "debug-clean-flash",
+      "displayName": "Debug Clean, Build & Flash",
+      "description": "Clean, build and flash debug target via probe-rs",
+      "configurePreset": "debug",
+      "cleanFirst": true,
+      "targets": ["flash"]
     },
     {
       "name": "release",
       "displayName": "Release Build",
+      "description": "Build release target",
       "configurePreset": "release"
     },
     {
       "name": "release-clean",
       "displayName": "Release Clean & Build",
+      "description": "Clean and build release target",
       "configurePreset": "release",
       "cleanFirst": true
     },
     {
       "name": "release-flash",
       "displayName": "Release Build & Flash",
+      "description": "Build and flash release target via probe-rs",
       "configurePreset": "release",
-      "targets": [
-        "flash"
-      ]
+      "targets": ["flash"]
+    },
+    {
+      "name": "release-clean-flash",
+      "displayName": "Release Clean, Build & Flash",
+      "description": "Clean, build and flash release target via probe-rs",
+      "configurePreset": "release",
+      "cleanFirst": true,
+      "targets": ["flash"]
     }
   ]
 }
