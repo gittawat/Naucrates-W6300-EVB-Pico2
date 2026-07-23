@@ -14,6 +14,10 @@ Vendored subset of WIZnet ioLibrary + Pico port layer for the W6300-EVB-Pico2 bo
 | `port/wizchip_spi.{c,h}` | [WIZnet-ioNIC/WIZnet-PICO-C](https://github.com/WIZnet-ioNIC/WIZnet-PICO-C) | `port/ioLibrary_Driver/src/wizchip_spi.c`, `.../inc/wizchip_spi.h` |
 | `port/wizchip_qspi_pio.{c,h,pio}` | [WIZnet-ioNIC/WIZnet-PICO-C](https://github.com/WIZnet-ioNIC/WIZnet-PICO-C) | `port/ioLibrary_Driver/src/wizchip_qspi_pio.{c,pio}`, `.../inc/wizchip_qspi_pio.h` |
 | `port/wizchip_gpio_irq.{c,h}` | [WIZnet-ioNIC/WIZnet-PICO-C](https://github.com/WIZnet-ioNIC/WIZnet-PICO-C) | `port/ioLibrary_Driver/src/wizchip_gpio_irq.c`, `.../inc/wizchip_gpio_irq.h` |
+
+> **Note:** `wizchip_gpio_irq.{c,h}` are kept on disk for reference but **not
+> compiled**. GPIO interrupt setup is handled by the consumer's app-layer
+> `InterruptManager` (see `naucrates/platform/interrupt_manager.hpp`).
 | `port/board_list.h` | [WIZnet-ioNIC/WIZnet-PICO-C](https://github.com/WIZnet-ioNIC/WIZnet-PICO-C) | `port/board_list.h` |
 | `port/port_common.h` | [WIZnet-ioNIC/WIZnet-PICO-C](https://github.com/WIZnet-ioNIC/WIZnet-PICO-C) | `port/port_common.h` |
 
