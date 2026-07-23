@@ -23,7 +23,8 @@ target_sources(wiz6300 PRIVATE
     # Port layer (Pico-specific)
     port/wizchip_spi.c
     port/wizchip_qspi_pio.c
-    port/wizchip_gpio_irq.c
+    # NOTE: port/wizchip_gpio_irq.c removed - interrupt setup now handled by
+    # the app-layer InterruptManager (naucrates/platform/interrupt_manager.hpp)
 )
 
 # ---------------------------------------------------------------------------
