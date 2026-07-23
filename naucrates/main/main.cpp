@@ -1,5 +1,4 @@
 #include "pico/stdlib.h"
-#include "naucrates/platform/interrupt_manager.hpp"
 #include "naucrates/platform/rtt_logger.hpp"
 #include "naucrates/modules/module_runner.hpp"
 #include "naucrates/modules/shared_data.hpp"
@@ -11,7 +10,6 @@ int main()
 {
     using namespace naucrates;
 
-    InterruptManagerSingleton::create();
     RTTLogger::init();
     RTTLogger::write("=== naucrates firmware ===\r\n");
 

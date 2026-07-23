@@ -7,6 +7,7 @@
 #include "etl/delegate.h"
 #include "etl/span.h"
 
+#include "naucrates/platform/interrupt_handlers.hpp"
 #include "naucrates/modules/module.hpp"
 #include "naucrates/modules/shared_data.hpp"
 #include "naucrates/drivers/wiznet/w6300_driver.hpp"
@@ -42,7 +43,7 @@ public:
 
     void configure() override;
     void update() override;
-    void handle_interrupt(size_t id) override;
+    void handle_interrupt() override;
 
 private:
     drivers::wiznet::W6300Driver& wiz_;
@@ -50,7 +51,7 @@ private:
     const UdpEchoConfig& cfg_;
 
     etl::atomic<bool> irq_pending_{false};
-    etl::delegate<void(size_t)> irq_delegate_{};
+    irq::IrqCallback irq_delegate_{};
 
     etl::array<uint8_t, 2048> rx_buf_{};
     etl::circular_buffer<uint16_t, 10> size_history_{};

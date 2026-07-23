@@ -1,6 +1,6 @@
 add_executable(naucrates
     main.cpp
-    trampolines.cpp
+    interrupt_handlers.cpp
     ../modules/udp_echo/udp_echo_module.cpp
 )
 

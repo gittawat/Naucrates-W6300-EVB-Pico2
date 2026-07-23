@@ -17,11 +17,11 @@ Remora-style module framework for real-time control.
 
 ```
 naucrates/
-├── platform/       Header-only utilities (InterruptManager, RTTLogger)
+├── platform/       Header-only utilities (interrupt_handlers, RTTLogger)
 ├── modules/        Module framework (Module base, ModuleRunner, SharedData)
 │   └── udp_echo/   UDP echo module (mockup)
 ├── drivers/wiznet/ W6300Driver C++ wrapper
-└── main/           Firmware orchestrator, config, ISR trampolines
+└── main/           Firmware orchestrator, config, ISR handlers
 ```
 
 ## Building and Flashing

@@ -1,6 +1,6 @@
 #include "naucrates/modules/udp_echo/udp_echo_module.hpp"
 #include "naucrates/platform/rtt_logger.hpp"
-#include "naucrates/platform/interrupt_manager.hpp"
+#include "naucrates/platform/interrupt_handlers.hpp"
 
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
@@ -10,8 +10,6 @@ extern "C" {
 }
 
 #include "etl/memory.h"
-
-extern "C" void wiznet_gpio_isr();
 
 namespace naucrates
 {
@@ -33,13 +31,12 @@ void UdpEchoModule::configure()
         (SIK_CONNECTED | SIK_DISCONNECTED | SIK_RECEIVED | SIK_TIMEOUT));
     wiz_.enable_chip_interrupt(1u << cfg_.socket_id);
 
-    irq_delegate_ = etl::delegate<void(size_t)>::create<
+    irq_delegate_ = irq::IrqCallback::create<
         UdpEchoModule, &UdpEchoModule::handle_interrupt>(*this);
 
-    InterruptManagerSingleton::instance()
-        .register_handler<IrqId::WiznetInt>(irq_delegate_);
+    irq::set_wiznet_handler(irq_delegate_);
 
-    gpio_add_raw_irq_handler(PIN_INT, &wiznet_gpio_isr);
+    gpio_add_raw_irq_handler(PIN_INT, &irq::wiznet_gpio_isr);
     gpio_set_irq_enabled(PIN_INT, GPIO_IRQ_EDGE_FALL, true);
     irq_set_enabled(IO_IRQ_BANK0, true);
 
@@ -48,7 +45,7 @@ void UdpEchoModule::configure()
     gpio_put(cfg_.led_pin, 0);
 }
 
-void UdpEchoModule::handle_interrupt(size_t)
+void UdpEchoModule::handle_interrupt()
 {
     irq_pending_.store(true, etl::memory_order_release);
 }

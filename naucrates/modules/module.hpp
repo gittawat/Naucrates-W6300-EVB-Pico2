@@ -26,7 +26,7 @@ public:
     virtual void update_post() {}
     virtual void slow_update() {}
     virtual void configure() {}
-    virtual void handle_interrupt(size_t) {}
+    virtual void handle_interrupt() {}
 
 private:
     int32_t thread_freq_       = 0;

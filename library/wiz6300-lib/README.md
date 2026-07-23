@@ -17,7 +17,7 @@ Vendored subset of WIZnet ioLibrary + Pico port layer for the W6300-EVB-Pico2 bo
 
 > **Note:** `wizchip_gpio_irq.{c,h}` are kept on disk for reference but **not
 > compiled**. GPIO interrupt setup is handled by the consumer's app-layer
-> `InterruptManager` (see `naucrates/platform/interrupt_manager.hpp`).
+> interrupt handlers (see `naucrates/platform/interrupt_handlers.hpp`).
 | `port/board_list.h` | [WIZnet-ioNIC/WIZnet-PICO-C](https://github.com/WIZnet-ioNIC/WIZnet-PICO-C) | `port/board_list.h` |
 | `port/port_common.h` | [WIZnet-ioNIC/WIZnet-PICO-C](https://github.com/WIZnet-ioNIC/WIZnet-PICO-C) | `port/port_common.h` |
 
@@ -29,7 +29,7 @@ Three changes from the original sources:
 |---|---|---|
 | `ioLibrary/wizchip_conf.h` | `#include "../Application/Application.h"` → `#include "Application.h"` | Application.h moved to same directory to flatten layout |
 | `port/wizchip_spi.c` | PHY link check: `while (temp == PHY_LINK_OFF);` → one-shot status report | Upstream hangs forever with no Ethernet cable plugged in; we report link status and continue |
-| `CMakeLists.txt` | Removed `port/wizchip_gpio_irq.c` from `target_sources`; made includes `SYSTEM` | Interrupt setup moved to app-layer `InterruptManager` (see project code); `SYSTEM` suppresses third-party C header warnings in consumer code |
+| `CMakeLists.txt` | Removed `port/wizchip_gpio_irq.c` from `target_sources`; made includes `SYSTEM` | Interrupt setup moved to app-layer interrupt handlers (see project code); `SYSTEM` suppresses third-party C header warnings in consumer code |
 
 ## Compile definitions
 
