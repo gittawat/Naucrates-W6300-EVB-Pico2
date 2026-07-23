@@ -24,8 +24,8 @@ Three changes from the original sources:
 | File | Change | Reason |
 |---|---|---|
 | `ioLibrary/wizchip_conf.h` | `#include "../Application/Application.h"` → `#include "Application.h"` | Application.h moved to same directory to flatten layout |
-| `port/wizchip_spi.h` | Added `extern "C" { }` guards | Port headers lacked C++ guards — `socket.h` and `wizchip_conf.h` already had them upstream |
 | `port/wizchip_spi.c` | PHY link check: `while (temp == PHY_LINK_OFF);` → one-shot status report | Upstream hangs forever with no Ethernet cable plugged in; we report link status and continue |
+| `CMakeLists.txt` | Removed `port/wizchip_gpio_irq.c` from `target_sources`; made includes `SYSTEM` | Interrupt setup moved to app-layer `InterruptManager` (see project code); `SYSTEM` suppresses third-party C header warnings in consumer code |
 
 ## Compile definitions
 

@@ -4,7 +4,9 @@
 #include <cstdint>
 #include "wizchip_conf.h"
 #include "socket.h"
+extern "C" {
 #include "wizchip_spi.h"
+}
 
 namespace naucrates::drivers::wiznet
 {

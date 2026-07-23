@@ -5,7 +5,9 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/irq.h"
+extern "C" {
 #include "wizchip_spi.h"
+}
 
 #include "etl/memory.h"
 
