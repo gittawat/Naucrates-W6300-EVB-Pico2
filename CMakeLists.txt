@@ -39,6 +39,18 @@ add_executable(${PROJECT_NAME}
     main.cpp
 )
 
+# Project headers (e.g. interrupt_manager.hpp)
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+# Compiler warnings (project code only; SDK/ETL/wiz6300 keep their own flags)
+target_compile_options(${PROJECT_NAME} PRIVATE
+    -Wall
+    -Wextra
+    -Wno-unused-parameter
+)
+
 # Pull in standard library dependencies, ETL, and RTT
 target_link_libraries(${PROJECT_NAME} pico_stdlib pico_multicore etl rtt wiz6300)
 

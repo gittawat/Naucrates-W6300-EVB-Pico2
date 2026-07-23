@@ -23,7 +23,8 @@ target_sources(wiz6300 PRIVATE
     # Port layer (Pico-specific)
     port/wizchip_spi.c
     port/wizchip_qspi_pio.c
-    port/wizchip_gpio_irq.c
+    # NOTE: port/wizchip_gpio_irq.c removed - interrupt setup now handled by
+    # the app-layer InterruptManager (include/naucrates/interrupt_manager.hpp)
 )
 
 # ---------------------------------------------------------------------------
@@ -36,7 +37,7 @@ pico_generate_pio_header(wiz6300
 # ---------------------------------------------------------------------------
 # Include paths
 # ---------------------------------------------------------------------------
-target_include_directories(wiz6300 PUBLIC
+target_include_directories(wiz6300 SYSTEM PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/ioLibrary          # socket.h, wizchip_conf.h, Application.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ioLibrary/W6300    # w6300.h
     ${CMAKE_CURRENT_SOURCE_DIR}/port               # all port headers

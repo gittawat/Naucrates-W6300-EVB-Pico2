@@ -1,13 +1,18 @@
 #include "pico/stdlib.h"
+#include "hardware/gpio.h"
+#include "hardware/irq.h"
 #include "SEGGER_RTT.h"
 #include "etl/array.h"
+#include "etl/atomic.h"
 #include "etl/circular_buffer.h"
+#include "etl/delegate.h"
 #include "etl/span.h"
 
 #include "wizchip_conf.h"
 #include "socket.h"
 #include "wizchip_spi.h"
-#include "wizchip_gpio_irq.h"
+
+#include "naucrates/interrupt_manager.hpp"
 
 // ============================================================================
 // Configuration
@@ -25,7 +30,12 @@ struct AppConfig
         .ip     = {10, 10, 10, 10},
         .sn     = {255, 255, 255, 0},
         .gw     = {10, 10, 10, 1},
+        .lla    = {},
+        .gua    = {},
+        .sn6    = {},
+        .gw6    = {},
         .dns    = {8, 8, 8, 8},
+        .dns6   = {},
         .ipmode = NETINFO_STATIC_V4,
         .dhcp   = NETINFO_STATIC,
     };
@@ -68,6 +78,15 @@ public:
         write("\r\n");
     }
 };
+
+// ============================================================================
+// ISR Trampolines (extern "C" for Pico SDK compatibility)
+// ============================================================================
+extern "C" void wiznet_gpio_isr()
+{
+    naucrates::InterruptManagerSingleton::instance()
+        .dispatch<naucrates::IrqId::WiznetInt>();
+}
 
 // ============================================================================
 // UDP Echo Server Class
@@ -115,9 +134,9 @@ public:
 
         while (true)
         {
-            if (s_irq_pending || getSn_RX_RSR(AppConfig::SOCKET_ID) > 0)
+            if (m_irq_pending.exchange(false, etl::memory_order_acq_rel) ||
+                getSn_RX_RSR(AppConfig::SOCKET_ID) > 0)
             {
-                s_irq_pending = false;
                 setSn_IR(AppConfig::SOCKET_ID, Sn_IR_RECV);
                 process_rx_packet();
             }
@@ -134,11 +153,15 @@ public:
     }
 
 private:
-    static inline volatile bool s_irq_pending = false;
+    static constexpr uint kIrqPin = PIN_INT;
 
-    static void on_wizchip_irq()
+    etl::atomic<bool>      m_irq_pending{false};
+    etl::delegate<void(size_t)> m_irq_delegate{};
+
+    void on_interrupt(size_t id)
     {
-        s_irq_pending = true;
+        (void)id;
+        m_irq_pending.store(true, etl::memory_order_release);
     }
 
     void init_led()
@@ -184,7 +207,22 @@ private:
     void configure_interrupt()
     {
         RTTLogger::write("Configuring W6300 interrupt on GPIO 15...\r\n");
-        wizchip_gpio_interrupt_initialize(AppConfig::SOCKET_ID, &UdpEchoServer::on_wizchip_irq);
+
+        uint32_t sn_mask = (SIK_CONNECTED | SIK_DISCONNECTED | SIK_RECEIVED | SIK_TIMEOUT);
+        ctlsocket(AppConfig::SOCKET_ID, CS_SET_INTMASK, &sn_mask);
+
+        uint32_t simr = ((1u << AppConfig::SOCKET_ID) << 8);
+        ctlwizchip(CW_SET_INTRMASK, &simr);
+
+        m_irq_delegate = etl::delegate<void(size_t)>::create<
+            UdpEchoServer, &UdpEchoServer::on_interrupt>(*this);
+
+        naucrates::InterruptManagerSingleton::instance()
+            .register_handler<naucrates::IrqId::WiznetInt>(m_irq_delegate);
+
+        gpio_add_raw_irq_handler(kIrqPin, &wiznet_gpio_isr);
+        gpio_set_irq_enabled(kIrqPin, GPIO_IRQ_EDGE_FALL, true);
+        irq_set_enabled(IO_IRQ_BANK0, true);
     }
 
     void process_rx_packet()
@@ -275,6 +313,8 @@ int main()
 {
     RTTLogger::init();
     RTTLogger::write("=== W6300-EVB-Pico2 Modern UDP Echo Server ===\r\n");
+
+    naucrates::InterruptManagerSingleton::create();
 
     UdpEchoServer server;
     if (!server.init())
