@@ -1,6 +1,5 @@
 #include "naucrates/modules/udp_echo/udp_echo_module.hpp"
 #include "naucrates/platform/rtt_logger.hpp"
-#include "naucrates/platform/interrupt_handlers.hpp"
 
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
@@ -31,18 +30,11 @@ void UdpEchoModule::configure()
         (SIK_CONNECTED | SIK_DISCONNECTED | SIK_RECEIVED | SIK_TIMEOUT));
     wiz_.enable_chip_interrupt(1u << cfg_.socket_id);
 
-    irq_delegate_ = irq::IrqCallback::create<
-        UdpEchoModule, &UdpEchoModule::handle_interrupt>(*this);
-
-    irq::set_wiznet_handler(irq_delegate_);
-
-    gpio_add_raw_irq_handler(PIN_INT, &irq::wiznet_gpio_isr);
-    gpio_set_irq_enabled(PIN_INT, GPIO_IRQ_EDGE_FALL, true);
-    irq_set_enabled(IO_IRQ_BANK0, true);
-
     gpio_init(cfg_.led_pin);
     gpio_set_dir(cfg_.led_pin, GPIO_OUT);
     gpio_put(cfg_.led_pin, 0);
+
+    next_diag_time_ = time_us_32() + 5000000;
 }
 
 void UdpEchoModule::handle_interrupt()
@@ -52,8 +44,7 @@ void UdpEchoModule::handle_interrupt()
 
 void UdpEchoModule::update()
 {
-    static uint32_t loop_count = 0;
-    ++loop_count;
+    const uint32_t now = time_us_32();
 
     if (irq_pending_.exchange(false, etl::memory_order_acq_rel) ||
         wiz_.rx_available(cfg_.socket_id))
@@ -62,13 +53,20 @@ void UdpEchoModule::update()
         process_rx_packet();
     }
 
-    if (loop_count % 500000 == 0)
+    if (heartbeat_active_ && static_cast<int32_t>(now - heartbeat_deadline_) >= 0)
     {
-        print_diagnostics(loop_count);
-        pulse_heartbeat();
+        gpio_put(cfg_.led_pin, led_state_ ? 1 : 0);
+        heartbeat_active_ = false;
+        next_diag_time_ = now + 5000000;
+        print_diagnostics();
     }
 
-    sleep_us(10);
+    if (!heartbeat_active_ && static_cast<int32_t>(now - next_diag_time_) >= 0)
+    {
+        gpio_put(cfg_.led_pin, 1);
+        heartbeat_deadline_ = now + 2000;
+        heartbeat_active_ = true;
+    }
 }
 
 void UdpEchoModule::process_rx_packet()
@@ -126,19 +124,12 @@ void UdpEchoModule::toggle_led()
     gpio_put(cfg_.led_pin, led_state_);
 }
 
-void UdpEchoModule::pulse_heartbeat()
+void UdpEchoModule::print_diagnostics()
 {
-    gpio_put(cfg_.led_pin, 1);
-    sleep_ms(2);
-    gpio_put(cfg_.led_pin, led_state_ ? 1 : 0);
-}
-
-void UdpEchoModule::print_diagnostics(uint32_t loop_count)
-{
-    RTTLogger::print("[STATS] rx_pkts=%lu  rx_bytes=%lu  echoed=%lu  errs=%lu  hist_sz=%zu  cycles=%lu\r\n",
+    RTTLogger::print("[STATS] rx_pkts=%lu  rx_bytes=%lu  echoed=%lu  errs=%lu  hist_sz=%zu\r\n",
         stats_.packets_received, stats_.bytes_received,
         stats_.packets_echoed, stats_.echo_errors,
-        size_history_.size(), loop_count);
+        size_history_.size());
 }
 
 } // namespace naucrates

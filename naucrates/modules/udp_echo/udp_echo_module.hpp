@@ -4,11 +4,8 @@
 #include "etl/array.h"
 #include "etl/atomic.h"
 #include "etl/circular_buffer.h"
-#include "etl/delegate.h"
 #include "etl/span.h"
 
-#include "naucrates/platform/interrupt_handlers.hpp"
-#include "naucrates/modules/module.hpp"
 #include "naucrates/modules/shared_data.hpp"
 #include "naucrates/drivers/wiznet/w6300_driver.hpp"
 #include "wizchip_conf.h"
@@ -26,7 +23,7 @@ struct UdpEchoConfig
     wiz_NetInfo net_info;
 };
 
-class UdpEchoModule : public Module
+class UdpEchoModule
 {
 public:
     struct Statistics
@@ -41,9 +38,14 @@ public:
                   SharedData& data,
                   const UdpEchoConfig& cfg);
 
-    void configure() override;
-    void update() override;
-    void handle_interrupt() override;
+    UdpEchoModule(const UdpEchoModule&)            = delete;
+    UdpEchoModule& operator=(const UdpEchoModule&) = delete;
+    UdpEchoModule(UdpEchoModule&&)                 = delete;
+    UdpEchoModule& operator=(UdpEchoModule&&)      = delete;
+
+    void configure();
+    void update();
+    void handle_interrupt();
 
 private:
     drivers::wiznet::W6300Driver& wiz_;
@@ -51,17 +53,19 @@ private:
     const UdpEchoConfig& cfg_;
 
     etl::atomic<bool> irq_pending_{false};
-    irq::IrqCallback irq_delegate_{};
 
     etl::array<uint8_t, 2048> rx_buf_{};
     etl::circular_buffer<uint16_t, 10> size_history_{};
     Statistics stats_{};
     bool led_state_ = false;
 
+    uint32_t next_diag_time_ = 0;
+    uint32_t heartbeat_deadline_ = 0;
+    bool heartbeat_active_ = false;
+
     void process_rx_packet();
     void toggle_led();
-    void pulse_heartbeat();
-    void print_diagnostics(uint32_t loop_count);
+    void print_diagnostics();
 };
 
 } // namespace naucrates

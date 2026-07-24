@@ -1,16 +1,17 @@
 #ifndef NAUCRATES_INTERRUPT_HANDLERS_HPP
 #define NAUCRATES_INTERRUPT_HANDLERS_HPP
 
-#include "etl/delegate.h"
+#include "naucrates/modules/module_concepts.hpp"
 
 namespace naucrates::irq
 {
 
-using IrqCallback = etl::delegate<void()>;
-
-void set_wiznet_handler(IrqCallback callback);
-
-extern "C" void wiznet_gpio_isr();
+template <typename T>
+constexpr void check_interrupt_handler()
+{
+    static_assert(InterruptHandlingModule<T>,
+                  "Instance must implement void handle_interrupt()");
+}
 
 } // namespace naucrates::irq
 

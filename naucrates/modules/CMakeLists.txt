@@ -1,10 +1,7 @@
-add_library(naucrates_modules STATIC)
-
-target_sources(naucrates_modules PRIVATE
-    module.cpp
-    module_runner.cpp
+add_library(naucrates_modules INTERFACE)
+target_include_directories(naucrates_modules INTERFACE
+    ${CMAKE_SOURCE_DIR}
 )
-
-target_link_libraries(naucrates_modules PUBLIC
+target_link_libraries(naucrates_modules INTERFACE
     naucrates_platform
 )

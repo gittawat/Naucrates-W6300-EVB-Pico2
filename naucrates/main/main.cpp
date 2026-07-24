@@ -1,19 +1,32 @@
 #include "pico/stdlib.h"
 #include "naucrates/platform/rtt_logger.hpp"
-#include "naucrates/modules/module_runner.hpp"
+#include "naucrates/modules/module_concepts.hpp"
 #include "naucrates/modules/shared_data.hpp"
+#include "naucrates/modules/static_module_runner.hpp"
 #include "naucrates/modules/udp_echo/udp_echo_module.hpp"
 #include "naucrates/drivers/wiznet/w6300_driver.hpp"
 #include "naucrates/main/firmware_config.hpp"
 
+using namespace naucrates;
+
+static drivers::wiznet::W6300Driver wiz;
+static SharedData shared_data;
+static UdpEchoModule echo(wiz, shared_data, config::UDP_ECHO);
+
+static_assert(InterruptHandlingModule<UdpEchoModule>,
+              "UdpEchoModule must implement void handle_interrupt()");
+
+extern "C" void wiznet_gpio_isr()
+{
+    gpio_acknowledge_irq(PIN_INT, GPIO_IRQ_EDGE_FALL);
+    echo.handle_interrupt();
+}
+
 int main()
 {
-    using namespace naucrates;
-
     RTTLogger::init();
     RTTLogger::write("=== naucrates firmware ===\r\n");
 
-    static drivers::wiznet::W6300Driver wiz;
     if (!wiz.init())
     {
         RTTLogger::write("FATAL: W6300 init failed!\r\n");
@@ -26,12 +39,13 @@ int main()
         while (true) { tight_loop_contents(); }
     }
 
-    static SharedData shared_data;
-    static ModuleRunner runner(config::SERVO_FREQ_HZ);
+    gpio_add_raw_irq_handler(PIN_INT, &wiznet_gpio_isr);
+    gpio_set_irq_enabled(PIN_INT, GPIO_IRQ_EDGE_FALL, true);
+    irq_set_enabled(IO_IRQ_BANK0, true);
 
-    static UdpEchoModule echo(wiz, shared_data, config::UDP_ECHO);
     echo.configure();
-    runner.register_module(echo);
+
+    static StaticModuleRunner runner(config::SERVO_FREQ_HZ, echo);
 
     RTTLogger::write("naucrates firmware initialized.\r\n\r\n");
 
