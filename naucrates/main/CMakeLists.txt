@@ -8,7 +8,7 @@
 #   target_link_libraries(naucrates
 #       naucrates_wiznet
 #       naucrates_modules
-#       naucrates_platform
+#       naucrates_common
 #       pico_multicore
 #   )
 #

@@ -3,5 +3,5 @@ target_include_directories(naucrates_modules INTERFACE
     ${CMAKE_SOURCE_DIR}
 )
 target_link_libraries(naucrates_modules INTERFACE
-    naucrates_platform
+    naucrates_common
 )

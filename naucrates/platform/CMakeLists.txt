@@ -9,6 +9,3 @@ target_link_libraries(naucrates_platform INTERFACE
     hardware_irq
     hardware_gpio
 )
-target_compile_options(naucrates_platform INTERFACE
-    -Wall -Wextra -Wno-unused-parameter
-)

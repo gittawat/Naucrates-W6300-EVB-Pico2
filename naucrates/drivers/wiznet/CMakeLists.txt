@@ -4,5 +4,5 @@ target_include_directories(naucrates_wiznet INTERFACE
 )
 target_link_libraries(naucrates_wiznet INTERFACE
     wiz6300
-    naucrates_platform
+    naucrates_common
 )
