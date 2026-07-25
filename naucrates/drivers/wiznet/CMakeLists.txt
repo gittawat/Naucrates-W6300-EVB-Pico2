@@ -1,10 +1,8 @@
-add_library(naucrates_wiznet STATIC)
-
-target_sources(naucrates_wiznet PRIVATE
-    w6300_driver.cpp
+add_library(naucrates_wiznet INTERFACE)
+target_include_directories(naucrates_wiznet INTERFACE
+    ${CMAKE_SOURCE_DIR}
 )
-
-target_link_libraries(naucrates_wiznet PUBLIC
+target_link_libraries(naucrates_wiznet INTERFACE
     wiz6300
     naucrates_platform
 )
