@@ -54,6 +54,9 @@
 #ifndef  _WIZCHIP_CONF_H_
 #define  _WIZCHIP_CONF_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdint.h>
 /**
@@ -1362,6 +1365,10 @@ int8_t wizchip_getprefix(wiz_Prefix * prefix);
     */
    void wizchip_gettimeout(wiz_NetTimeout* nettime);
 
+#endif
+
+#ifdef __cplusplus
+ }
 #endif
 
 #endif   // _WIZCHIP_CONF_H_

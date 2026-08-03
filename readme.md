@@ -1,15 +1,14 @@
 # naucrates
 
 Modular embedded firmware for the **W6300-EVB-Pico2** (RP2350), built with
-modern C++23 and the Embedded Template Library (ETL). Designed as a
-Remora-style module framework for real-time control.
+modern C++23 and the Embedded Template Library (ETL).
 
 ## Dependencies
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
 | Pico SDK | `sdk/pico-sdk` (submodule) | RP2350 hardware abstraction |
-| ETL 20.48.0 | `library/etl` (submodule) | No-heap containers, delegates, atomics |
+| ETL 20.48.0 | `library/etl` (submodule) | No-heap containers |
 | SEGGER RTT | `library/RTT` (submodule) | SWD logging output |
 | wiz6300-lib | `library/wiz6300-lib` | W6300 Ethernet chip driver (C) |
 
@@ -17,57 +16,65 @@ Remora-style module framework for real-time control.
 
 ```
 naucrates/
-├── platform/       Header-only utilities (InterruptManager, RTTLogger)
-├── modules/        Module framework (Module base, ModuleRunner, SharedData)
-│   └── udp_echo/   UDP echo module (mockup)
-├── drivers/wiznet/ W6300Driver C++ wrapper
-└── main/           Firmware orchestrator, config, ISR trampolines
+├── utilities/       Header-only infrastructure (naucrates_utilities)
+│   ├── rtt_logger.hpp   RTTLogger — SWD logging
+│   └── triple_buffer.hpp  TripleBuffer — wait-free inter-core exchange
+├── features/        Feature modules (naucrates_features)
+│   └── blinky/           Blinky — GPIO LED toggle helper
+├── drivers/wiznet/  W6300Driver C++ wrapper (naucrates_wiznet)
+│   ├── w6300_driver.hpp
+│   └── w6300_driver.cpp
+├── main/            Firmware entry point and board-level configuration
+│   ├── main.cpp
+│   └── firmware_config.hpp
+└── tests/           On-target tests (triple_buffer_mcu_test)
 ```
 
-## Building and Flashing
+`naucrates/ignore_this/` holds the previous module-framework experiment
+(`ModuleConcept`, `StaticModuleRunner`) and is intentionally gitignored.
 
-### Configure
+## Building
+
+Configure and build using CMake presets:
 
 ```bash
-cmake --preset debug
-cmake --preset release
+cmake --preset debug              # configure (build/debug/)
+cmake --build --preset debug      # build
+cmake --build --preset debug-clean # clean + build
 ```
 
-### Build
+For release builds, substitute `release` / `release-clean`.
+
+## Flashing
+
+Flash the firmware via probe-rs over SWD:
 
 ```bash
-# Standard build (Ninja)
-cmake --build --preset debug
-cmake --build --preset release
-
-# Clean & build
-cmake --build --preset debug-clean
-cmake --build --preset release-clean
+probe-rs download --chip RP235x --protocol swd build/debug/naucrates.elf \
+  && probe-rs reset --chip RP235x --protocol swd
 ```
 
-### Flash (via probe-rs SWD)
+For the release build, use `build/release/naucrates.elf`.
+
+To flash and run the triple-buffer test:
 
 ```bash
-# Build & flash
-cmake --build --preset debug-flash
-
-# Clean, build & flash
-cmake --build --preset debug-clean-flash
+probe-rs download --chip RP235x --protocol swd build/debug/naucrates/tests/triple_buffer_mcu_test.elf \
+  && probe-rs reset --chip RP235x --protocol swd
 ```
 
-## Adding a Module
+## Adding a Feature
 
-1. Create `naucrates/modules/<name>/<name>.hpp` + `.cpp` (inherit `Module`)
-2. Add one line to `naucrates/main/CMakeLists.txt`:
+1. Create `naucrates/features/<name>/<name>.hpp` + `.cpp`.
+2. Add the `.cpp` to `naucrates/features/CMakeLists.txt`:
    ```cmake
-   ../modules/<name>/<name>.cpp
+   target_sources(naucrates_features PRIVATE
+       blinky/blinky.cpp
+       <name>/<name>.cpp
+   )
    ```
-3. Register in `naucrates/main/main.cpp`:
-   ```cpp
-   static MyModule mod(config::MY_MODULE);
-   mod.configure();
-   runner.register_module(mod);
-   ```
+3. Instantiate and use it in `naucrates/main/main.cpp`.
+4. Add any new config structs to `naucrates/main/firmware_config.hpp`.
 
 ## License
 

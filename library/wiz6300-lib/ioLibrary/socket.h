@@ -84,6 +84,9 @@
  */
 #ifndef _SOCKET_H_
 #define _SOCKET_H_
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 #include "wizchip_conf.h"
 
@@ -725,6 +728,11 @@ int32_t recvfrom_W6x00(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, 
 
 #endif 
 
+
+
+#ifdef __cplusplus
+ }
+#endif
 
 #endif   // _SOCKET_H_
 

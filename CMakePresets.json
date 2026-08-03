@@ -37,21 +37,6 @@
       "cleanFirst": true
     },
     {
-      "name": "debug-flash",
-      "displayName": "Debug Build & Flash",
-      "description": "Build and flash debug target via probe-rs",
-      "configurePreset": "debug",
-      "targets": ["flash"]
-    },
-    {
-      "name": "debug-clean-flash",
-      "displayName": "Debug Clean, Build & Flash",
-      "description": "Clean, build and flash debug target via probe-rs",
-      "configurePreset": "debug",
-      "cleanFirst": true,
-      "targets": ["flash"]
-    },
-    {
       "name": "release",
       "displayName": "Release Build",
       "description": "Build release target",
@@ -63,21 +48,6 @@
       "description": "Clean and build release target",
       "configurePreset": "release",
       "cleanFirst": true
-    },
-    {
-      "name": "release-flash",
-      "displayName": "Release Build & Flash",
-      "description": "Build and flash release target via probe-rs",
-      "configurePreset": "release",
-      "targets": ["flash"]
-    },
-    {
-      "name": "release-clean-flash",
-      "displayName": "Release Clean, Build & Flash",
-      "description": "Clean, build and flash release target via probe-rs",
-      "configurePreset": "release",
-      "cleanFirst": true,
-      "targets": ["flash"]
     }
   ]
 }
