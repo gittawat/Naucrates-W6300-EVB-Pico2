@@ -5,7 +5,7 @@
 #include <type_traits>
 
 #include "etl/atomic.h"
-
+#include "etl/array.h"
 namespace naucrates
 {
 
@@ -43,21 +43,14 @@ concept TriviallyCopyable = std::is_trivially_copyable_v<T>;
 template <TriviallyCopyable T>
 class TripleBuffer
 {
-    T                    buf_[3]{};
-    etl::atomic<uint8_t> shared_;
-    etl::atomic<bool>    dirty_;
-    uint8_t              p_idx_;
-    uint8_t              c_idx_;
+    etl::array<T,3>     buf_{};
+    etl::atomic<uint8_t> shared_{1};
+    etl::atomic<bool>    dirty_{false};
+    uint8_t              p_idx_{0};
+    uint8_t              c_idx_{2};
 
 public:
-    TripleBuffer()
-        : shared_(1)
-        , dirty_(false)
-        , p_idx_(0)
-        , c_idx_(2)
-    {}
-    
-    // will do something about this later...
+    TripleBuffer() = default;
     TripleBuffer(const TripleBuffer&)            = delete;
     TripleBuffer& operator=(const TripleBuffer&) = delete;
     TripleBuffer(TripleBuffer&&)                 = delete;
