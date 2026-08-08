@@ -6,5 +6,9 @@ target_sources(naucrates_wiznet PRIVATE
 
 target_link_libraries(naucrates_wiznet PUBLIC
     wiz6300
+    naucrates_utilities
+)
+
+target_link_libraries(naucrates_wiznet PRIVATE 
     naucrates_common
 )

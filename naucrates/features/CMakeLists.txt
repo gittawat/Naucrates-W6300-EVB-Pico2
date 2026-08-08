@@ -4,8 +4,13 @@ target_include_directories(naucrates_features PUBLIC
 )
 
 target_link_libraries(naucrates_features PUBLIC
+    naucrates_utilities
+)
+
+target_link_libraries(naucrates_features PRIVATE
     naucrates_common
 )
+
 target_sources(naucrates_features PRIVATE
     blinky/blinky.cpp
 )

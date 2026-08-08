@@ -1,6 +1,49 @@
 CompileFlags:
   CompilationDatabase: "build"
+  Add:
+    - -Wno-unknown-warning-option
+    - -Wno-unknown-pragmas
+    - -Wno-unused-command-line-argument
+  Remove:
+    - -mcmse
+    - -ffunction-sections
+    - -fdata-sections
+    - -fno-use-cxa-atexit
 
 Diagnostics:
-  # Suppressing 'header not used' warning
   UnusedIncludes: None
+  Suppress:
+    - pp_including_mainfile_in_preamble
+    - unused_includes
+  ClangTidy:
+    Add:
+      - bugprone-*
+      - performance-*
+      - modernize-*
+      - readability-braces-around-statements
+      - hicpp-no-malloc
+    Remove:
+      - cppcoreguidelines-*
+      - cert-err60-cpp
+      - cert-err52-cpp
+      - cert-err58-cpp
+      - modernize-use-trailing-return-type
+      - modernize-use-nodiscard
+      - bugprone-easily-swappable-parameters
+    CheckOptions:
+      readability-braces-around-statements.ShortStatementLines: "2"
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes
+  Designators: Yes
+
+Hover:
+  ShowAKA: Yes
+
+Completion:
+  AllScopes: Yes
+
+Index:
+  Background: Build

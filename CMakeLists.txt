@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.20)
 
 set(PICO_PLATFORM rp2350)
 set(PICO_SDK_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sdk/pico-sdk")
