@@ -76,6 +76,16 @@ probe-rs download --chip RP235x --protocol swd build/debug/naucrates/tests/tripl
 3. Instantiate and use it in `naucrates/main/main.cpp`.
 4. Add any new config structs to `naucrates/main/firmware_config.hpp`.
 
+
+## SDK and Library doc gen
+```bash
+  cd build_doc/pico-sdk-doc
+  cmake ../../sdk/pico-sdk -DPICO_BUILD_DOCS=1 -DPICO_PLATFORM=rp2350 -DPICO_NO_PICOTOOL=TRUE -G "Ninja"
+
+  cd build_doc/etl-docs
+  doxygen ../../library/etl/Doxyfile
+```
+
 ## License
 
 TBD
