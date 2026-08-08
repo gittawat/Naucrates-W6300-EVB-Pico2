@@ -1,0 +1,49 @@
+# Naucrates C++23 Formatting Configuration
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: Latest
+
+# Indentation & Tab Settings
+IndentWidth: 4
+TabWidth: 4
+UseTab: ForIndentation
+NamespaceIndentation: None
+AccessModifierOffset: -4
+
+# Line Length Limit
+ColumnLimit: 100
+
+# Braces on the Same Line
+BreakBeforeBraces: Attach
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+#AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# Pointer Alignment (left-aligned: const T& src, uint8_t* ptr)
+PointerAlignment: Left
+
+# Field & Variable Consecutive Alignment
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+
+# Spacing Rules
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesInSquareBrackets: false
+SpacesInAngles: false
+
+# Disable Include Sorting (leaves #include order untouched)
+SortIncludes: Never
+
+# Namespaces
+FixNamespaceComments: true
+CompactNamespaces: false
