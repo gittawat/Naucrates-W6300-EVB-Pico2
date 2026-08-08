@@ -1,6 +1,7 @@
 #ifndef NAUCRATES_FIRMWARE_CONFIG_HPP
 #define NAUCRATES_FIRMWARE_CONFIG_HPP
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
 
@@ -24,7 +25,7 @@ inline constexpr W6300Config W6300{};
 template <uint8_t... Pins>
 consteval bool are_pins_unique()
 {
-    constexpr uint8_t pin_array[] = { Pins... };
+    constexpr std::array<uint8_t,sizeof...(Pins)> pin_array{ Pins... };
     for (size_t i = 0; i < sizeof...(Pins); ++i)
     {
         for (size_t j = i + 1; j < sizeof...(Pins); ++j)

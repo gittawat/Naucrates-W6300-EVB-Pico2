@@ -18,6 +18,6 @@ int main()
     while (true)
     {
         blinky.toggle();
-        sleep_ms(250);
+        sleep_ms(500);
     }
 }
