@@ -44,9 +44,9 @@ static bool isr_publish_cb(repeating_timer_t* rt) {
 	++i;
 
 	PositionData d{};
-	d.counter       = i;
-	d.checksum      = compute_checksum(d);
-	d.timestamp_us  = time_us_32();
+	d.counter      = i;
+	d.checksum     = compute_checksum(d);
+	d.timestamp_us = time_us_32();
 
 	g_buffer.publish(d);
 
@@ -95,12 +95,12 @@ int main() {
 	uint32_t t_start = time_us_32();
 
 	while (true) {
-		const PositionData& snap = g_buffer.read_latest();
-		uint32_t t_read = time_us_32();
+		const PositionData& snap   = g_buffer.read_latest();
+		uint32_t            t_read = time_us_32();
 		++read_count;
 
-		bool done_now = g_producer_done.load(etl::memory_order_acquire) &&
-		                snap.counter >= kPublishCount;
+		bool done_now =
+		    g_producer_done.load(etl::memory_order_acquire) && snap.counter >= kPublishCount;
 
 		if (snap.counter > 0 && !done_now) {
 			if (snap.counter < last_counter) {
@@ -113,7 +113,7 @@ int main() {
 			if (age > max_age_us) {
 				max_age_us = age;
 			}
-			if (last_counter > 0) {
+			if (last_counter > 0 && snap.counter >= last_counter) {
 				uint32_t delta = snap.counter - last_counter;
 				if (delta > max_delta) {
 					max_delta = delta;

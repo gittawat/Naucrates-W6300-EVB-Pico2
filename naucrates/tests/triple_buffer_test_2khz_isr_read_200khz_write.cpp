@@ -76,8 +76,8 @@ static bool isr_publish_cb(repeating_timer_t* rt) {
 static bool consumer_read_cb(repeating_timer_t* rt) {
 	gpio_xor_mask(1u << kConsumerProbePin);
 
-	const PositionData& snap = g_buffer.read_latest();
-	uint32_t t_read = time_us_32();
+	const PositionData& snap   = g_buffer.read_latest();
+	uint32_t            t_read = time_us_32();
 	++g_read_count;
 
 	// Read-cadence jitter: interval between this tick and the previous one.
@@ -94,8 +94,8 @@ static bool consumer_read_cb(repeating_timer_t* rt) {
 	}
 	g_t_prev_read = t_read;
 
-	bool done_now = g_producer_done.load(etl::memory_order_acquire) &&
-	                snap.counter >= kPublishCount;
+	bool done_now =
+	    g_producer_done.load(etl::memory_order_acquire) && snap.counter >= kPublishCount;
 
 	if (snap.counter > 0 && !done_now) {
 		if (snap.counter < g_last_counter) {
@@ -110,7 +110,7 @@ static bool consumer_read_cb(repeating_timer_t* rt) {
 		}
 		g_sum_age_us += age;
 		++g_age_samples;
-		if (g_last_counter > 0) {
+		if (g_last_counter > 0 && snap.counter >= g_last_counter) {
 			uint32_t delta = snap.counter - g_last_counter;
 			if (delta > g_max_delta) {
 				g_max_delta = delta;
@@ -177,8 +177,8 @@ int main() {
 	uint32_t publishes      = kPublishCount;
 	uint32_t reads_per_sec  = (g_read_count * 1000u) / (duration_ms == 0 ? 1u : duration_ms);
 	uint32_t writes_per_sec = (publishes * 1000u) / (duration_ms == 0 ? 1u : duration_ms);
-	uint32_t avg_age_us     = (g_age_samples == 0) ? 0u
-	                                               : static_cast<uint32_t>(g_sum_age_us / g_age_samples);
+	uint32_t avg_age_us =
+	    (g_age_samples == 0) ? 0u : static_cast<uint32_t>(g_sum_age_us / g_age_samples);
 
 	const char* verdict =
 	    (g_torn == 0 && g_regressions == 0 && g_last_counter == kPublishCount) ? "PASS" : "FAIL";
@@ -191,7 +191,8 @@ int main() {
 	RTTLogger::print("last counter:   %lu\r\n", static_cast<unsigned long>(g_last_counter));
 	RTTLogger::print("torn reads:     %u\r\n", g_torn);
 	RTTLogger::print("regressions:    %u\r\n", g_regressions);
-	RTTLogger::print("max data age:           %lu us\r\n", static_cast<unsigned long>(g_max_age_us));
+	RTTLogger::print("max data age:           %lu us\r\n",
+	                 static_cast<unsigned long>(g_max_age_us));
 	RTTLogger::print("avg data age:           %lu us\r\n", static_cast<unsigned long>(avg_age_us));
 	RTTLogger::print("max publishes per poll: %u\r\n", g_max_delta);
 	RTTLogger::print("poll interval min/max:  %lu / %lu us\r\n",
