@@ -51,6 +51,8 @@ class TripleBuffer
 
 public:
     TripleBuffer() = default;
+
+    //diabling move and copy
     TripleBuffer(const TripleBuffer&)            = delete;
     TripleBuffer& operator=(const TripleBuffer&) = delete;
     TripleBuffer(TripleBuffer&&)                 = delete;
