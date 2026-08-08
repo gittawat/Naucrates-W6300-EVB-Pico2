@@ -17,3 +17,14 @@ target_link_libraries(triple_buffer_test_2khz_read_200khz_write PRIVATE
     pico_time
     hardware_gpio
 )
+
+add_executable(triple_buffer_test_2khz_isr_read_200khz_write
+    triple_buffer_test_2khz_isr_read_200khz_write.cpp
+)
+target_link_libraries(triple_buffer_test_2khz_isr_read_200khz_write PRIVATE
+    naucrates_common
+    naucrates_utilities
+    pico_multicore
+    pico_time
+    hardware_gpio
+)
