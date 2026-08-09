@@ -1,7 +1,7 @@
 #include <cstdint>
 
 #include "hardware/gpio.h"
-#include "naucrates/system/hardware_timer.hpp"
+#include "naucrates/system/timer_isr.hpp"
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
 #include "pico/platform.h"
