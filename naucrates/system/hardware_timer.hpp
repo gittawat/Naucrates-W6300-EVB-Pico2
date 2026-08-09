@@ -131,27 +131,31 @@ inline TimerIsr::~TimerIsr() {
 	if (!initialized_) {
 		return;
 	}
-	timer_->armed = 1u << alarm_index;
 	irq_set_enabled(irq_, false);
+	timer_->armed = 1u << alarm_index;
+
+	hw_clear_bits(&timer_->inte, 1u << alarm_index);
 	timer_hardware_alarm_unclaim(timer_, alarm_index);
+	irq_remove_handler(irq_, irq_handler);
+
 	s_instances[irq_] = nullptr;
 	initialized_      = false;
 }
 
 inline void TimerIsr::irq_handler() {
 	// for time measuring
-	//gpio_put(0, true);
-	//gpio_put(1, true);
-	
+	// gpio_put(0, true);
+	// gpio_put(1, true);
+
 	const uint32_t irq  = __get_current_exception() - VTABLE_FIRST_IRQ;
 	TimerIsr*      self = s_instances[irq];
 	if (self == nullptr) {
 		return;
 	}
+	// self->timer_->intr = 1u << self->alarm_index;
 	hw_clear_bits(&self->timer_->intr, 1u << self->alarm_index);
-	// self->timer_->intr = 1u << 0;
 
-	if (!self->running_ || !self->cb_.is_valid()) {
+	if (!(self->running_) || !(self->cb_.is_valid())) {
 		self->stop();
 		return;
 	}
