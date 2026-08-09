@@ -27,6 +27,7 @@ target_compile_options(naucrates_common INTERFACE
 )
 
 add_subdirectory(utilities)
+add_subdirectory(system)
 add_subdirectory(drivers/wiznet)
 add_subdirectory(features)
 add_subdirectory(main)
