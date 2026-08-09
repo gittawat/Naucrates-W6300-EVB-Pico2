@@ -1,0 +1,12 @@
+# Vendored code (pico-sdk submodule) — silence clang-tidy noise.
+# Parser diagnostics still shown; all other settings inherited from root .clangd.
+Diagnostics:
+  ClangTidy:
+    Add: []
+    Remove:
+      - '*'
+
+CompileFlags:
+  Add:
+    - -include
+    - pico/platform/compiler.h
