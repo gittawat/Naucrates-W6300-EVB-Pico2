@@ -103,3 +103,24 @@ target_link_libraries(typed_timer_owner_test PRIVATE
     pico_multicore
     hardware_gpio
 )
+
+add_executable(new_timer_test
+    hardware_timer/new_timer_test.cpp
+)
+target_link_libraries(new_timer_test PRIVATE
+    naucrates_common
+    naucrates_system
+    pico_stdlib
+    pico_multicore
+    hardware_gpio
+)
+
+add_executable(new_timer_stop_test
+    hardware_timer/new_timer_stop_test.cpp
+)
+target_link_libraries(new_timer_stop_test PRIVATE
+    naucrates_common
+    naucrates_system
+    pico_stdlib
+    hardware_gpio
+)
