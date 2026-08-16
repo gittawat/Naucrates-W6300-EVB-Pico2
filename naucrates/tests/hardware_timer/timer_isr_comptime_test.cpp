@@ -7,7 +7,7 @@
 using namespace naucrates;
 
 // 1 kHz on core 0 (timer 0, alarm 0)
-static constexpr int64_t kIntervalUs = 1000; // 1 ms
+static constexpr int64_t kIntervalUs = 100; // 1 ms
 
 class Core0Blinker {
 public:

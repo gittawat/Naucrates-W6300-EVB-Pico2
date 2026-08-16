@@ -116,36 +116,38 @@ private:
 		// Clear the interrupt flag
 		hw_clear_bits(&TIMER_INSTANCE(TimerNum)->intr, 1u << kAlarm);
 
-		//if (!running_) {
+		// if (!running_) {
 		//	TIMER_INSTANCE(TimerNum)->armed = 1u << kAlarm;
 		//	return;
-		//}
+		// }
 
 		// Periods use a self-timed chain: the alarm is re-armed with
 		// timerawl + |period|.  Negative periods re-arm at ISR entry
 		// (start-to-start); positive periods re-arm after the callback
 		// returns (matching the SDK repeating-timer semantics).
-		//const bool rearm_at_entry = period_us_ < 0;
-		//if (rearm_at_entry) {
-			arm_next();
+		// const bool rearm_at_entry = period_us_ < 0;
+		// if (rearm_at_entry) {
+		arm_next();
 		//}
 
-		//const bool repeat = 
+		// const bool repeat =
 		(Obj->*Callback)();
-		//if (!repeat) {
+		// if (!repeat) {
 		//	stop();
 		//	return;
-		//}
+		// }
 
-		//if (!rearm_at_entry) {
+		// if (!rearm_at_entry) {
 		//	arm_next();
-		//}
+		// }
 	}
 
 	__force_inline static void arm_next() {
-		//const uint32_t magnitude =
-		//    period_us_ < 0 ? static_cast<uint32_t>(-period_us_) : static_cast<uint32_t>(period_us_);
-		TIMER_INSTANCE(TimerNum)->alarm[kAlarm] = TIMER_INSTANCE(TimerNum)->timerawl + static_cast<uint32_t>(period_us_) ;
+		// const uint32_t magnitude =
+		//     period_us_ < 0 ? static_cast<uint32_t>(-period_us_) :
+		//     static_cast<uint32_t>(period_us_);
+		TIMER_INSTANCE(TimerNum)->alarm[kAlarm] =
+		    TIMER_INSTANCE(TimerNum)->timerawl + static_cast<uint32_t>(period_us_);
 	}
 };
 
