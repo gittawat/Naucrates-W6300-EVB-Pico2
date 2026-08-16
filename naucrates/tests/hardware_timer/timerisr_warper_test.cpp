@@ -8,7 +8,7 @@
 using namespace naucrates;
 
 // 1 kHz on core 0 (timer 0), 10 kHz on core 1 (timer 1)
-static constexpr int64_t kIntervalUs     = 1000; // 1 ms
+static constexpr int64_t kIntervalUs     = 0; // 1 ms
 static constexpr int64_t kFastIntervalUs = 10;   // 10 us
 
 static void core1_entry() {
@@ -19,6 +19,10 @@ static void core1_entry() {
 	core1_timer.init({.timer_num = 1, .expected_core = 1});
 	core1_timer.start_repeating_us(-kFastIntervalUs, etl::delegate<bool()>(+[]() -> bool {
 		gpio_xor_mask(1u << 1); // core 1 ISR toggle GPIO pin 1
+		//volatile uint32_t x = 0;
+		//while(x < 10){
+		//	x = x + 1;
+		//}
 		return true;
 	}));
 
@@ -43,7 +47,7 @@ int main() {
 	// Must run on core 0
 	system::TimerIsr core0_timer;
 	core0_timer.init({.timer_num = 0, .expected_core = 0});
-	core0_timer.start_repeating_us(-kIntervalUs, etl::delegate<bool()>(+[]() -> bool {
+	core0_timer.start_repeating_us(kIntervalUs, etl::delegate<bool()>(+[]() -> bool {
 		gpio_xor_mask(1u << 0); // core 0 ISR toggle GPIO pin 0
 		//gpio_put(0,false);	
 		return true;

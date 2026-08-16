@@ -46,14 +46,14 @@ public:
 		timer_->armed = 1u << alarm_index;
 
 		s_instances[irq_] = nullptr;
-		
+
 		hw_clear_bits(&timer_->inte, 1u << alarm_index);
 		hw_clear_bits(&timer_->intr, 1u << alarm_index);
 
 		timer_hardware_alarm_unclaim(timer_, alarm_index);
 		irq_remove_handler(irq_, irq_handler);
 
-		initialized_      = false;
+		initialized_ = false;
 	}
 
 	/// Claims a hardware alarm, registers the ISR and enables the IRQ.
@@ -133,10 +133,10 @@ private:
 		if (self == nullptr) {
 			return;
 		}
-
+		gpio_xor_mask(1u << 1); // core 1 ISR toggle GPIO pin 1
 		// self->timer_->intr = 1u << self->alarm_index;
 		hw_clear_bits(&self->timer_->intr, 1u << self->alarm_index);
-		
+
 		if (!(self->running_) || !(self->cb_.is_valid())) {
 			self->stop();
 			return;
@@ -146,7 +146,9 @@ private:
 		if (rearm_at_entry) {
 			self->arm_next();
 		}
+		gpio_xor_mask(1u << 1); // core 1 ISR toggle GPIO pin 1
 		const bool repeat = self->cb_();
+		gpio_xor_mask(1u << 1);
 		if (!repeat) {
 			self->stop();
 			return;

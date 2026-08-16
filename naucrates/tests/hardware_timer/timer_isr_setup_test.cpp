@@ -7,7 +7,9 @@
 #define INTERVAL_US 1000 // 100 ms
 
 // --- Core 0 ISR & Setup (TIMER0) ---
-void timer0_isr() {
+void __not_in_flash_func(timer0_isr)() {
+	gpio_xor_mask(1u << 1); // probe: isr entry (a/b parity with timerisrstatic)
+	
 	// Clear the interrupt flag for TIMER0 Alarm 0
 	timer0_hw->intr = 1u << 0;
 
@@ -39,7 +41,7 @@ void timer1_isr() {
 	timer1_hw->alarm[0] = timer1_hw->timerawl + INTERVAL_US/10;
 
 	// Perform Core 1 task work here...
-	gpio_xor_mask(1u << 1); // core 1 isr toggle GPIO pin 1
+	//gpio_xor_mask(1u << 1); // core 1 isr toggle GPIO pin 1
 }
 
 void core1_entry() {
@@ -63,8 +65,10 @@ int main() {
     
 	gpio_init(0);
 	gpio_set_dir(0, GPIO_OUT);
+	gpio_put(0, false);
 	gpio_init(1);
 	gpio_set_dir(1, GPIO_OUT);
+	gpio_put(1, false);
 
 
 	// Launch Core 1 execution
